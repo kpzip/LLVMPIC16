@@ -1,5 +1,7 @@
 # WARNING: This project is WIP. It does not work at all yet.
 
+[PIC16 Folder](/lib/target/PIC16)
+
 To build, run:
 
 `mkdir build && cd build`

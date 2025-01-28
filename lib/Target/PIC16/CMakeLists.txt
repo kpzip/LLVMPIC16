@@ -20,7 +20,6 @@ add_llvm_target(PIC16CodeGen
   PIC16ISelDAGToDAG.cpp
   PIC16ISelLowering.cpp
   PIC16MemSelOpt.cpp
-  PIC16MCAsmInfo.cpp
   PIC16RegisterInfo.cpp
   PIC16Section.cpp
   PIC16Subtarget.cpp
@@ -32,6 +31,7 @@ add_llvm_target(PIC16CodeGen
   intrinsics_gen
   
   LINK_COMPONENTS
+  PIC16Desc
   PIC16Info
   AsmPrinter
   CodeGen
@@ -47,3 +47,4 @@ add_llvm_target(PIC16CodeGen
   )
 
 add_subdirectory(TargetInfo)
+add_subdirectory(MCTargetDesc)

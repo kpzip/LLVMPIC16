@@ -16,6 +16,7 @@
 
 #include "llvm/CodeGen/TargetSubtargetInfo.h"
 
+#define GET_SUBTARGETINFO_ENUM
 #define GET_SUBTARGETINFO_HEADER
 #include "PIC16GenSubtargetInfo.inc"
 

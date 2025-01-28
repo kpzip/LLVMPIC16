@@ -17,15 +17,14 @@
 #include "llvm/MC/MCAsmInfo.h"
 
 namespace llvm {
-  class Target;
-  class StringRef;
+  class Triple;
 
   class PIC16MCAsmInfo : public MCAsmInfo {
     const char *RomData8bitsDirective;
     const char *RomData16bitsDirective;
     const char *RomData32bitsDirective;
   public:    
-    PIC16MCAsmInfo(const Target &T, StringRef TT);
+    PIC16MCAsmInfo(const Triple &TT, const MCTargetOptions &Options);
     
     virtual const char *getDataASDirective(unsigned size, unsigned AS) const;
   };

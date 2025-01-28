@@ -20,7 +20,7 @@
 #include "PIC16ISelLowering.h"
 using namespace llvm;
 
-PIC16MCAsmInfo::PIC16MCAsmInfo(const Target &T, StringRef TT) {
+PIC16MCAsmInfo::PIC16MCAsmInfo(const Triple &TT, const MCTargetOptions &Options) {
   CommentString = ";";
   PrivateGlobalPrefix = PAN::getTagName(PAN::PREFIX_SYMBOL);
   GlobalDirective = "\tglobal\t";
@@ -44,6 +44,7 @@ PIC16MCAsmInfo::PIC16MCAsmInfo(const Target &T, StringRef TT) {
   HasSingleParameterDotFile = false;
 }
 
+// HACK: This method no longer exists in the parent class
 const char *PIC16MCAsmInfo::getDataASDirective(unsigned Size,
                                                unsigned AS) const {
   if (AS != PIC16ISD::ROM_SPACE)

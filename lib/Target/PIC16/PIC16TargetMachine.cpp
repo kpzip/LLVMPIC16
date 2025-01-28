@@ -12,7 +12,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "PIC16.h"
-#include "PIC16MCAsmInfo.h"
+//#include "PIC16MCAsmInfo.h"
 #include "PIC16TargetMachine.h"
 #include "llvm/IR/PassManager.h"
 #include "llvm/CodeGen/Passes.h"
@@ -52,7 +52,7 @@ PIC16TargetMachine::PIC16TargetMachine(const Target &T, const Triple &TT,
   FrameInfo() {
 
   // Maybe do something like this->TLOF = std::make_unique<AVRTargetObjectFile>();
-  // initAsmInfo();
+  initAsmInfo();
 }
 
 

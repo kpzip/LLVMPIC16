@@ -36,12 +36,7 @@ static Reloc::Model getEffectiveRelocModel(std::optional<Reloc::Model> RM) {
 
 // PIC16TargetMachine - Enhanced PIC16 mid-range Machine. May also represent
 // a Traditional Machine if 'Trad' is true.
-PIC16TargetMachine::PIC16TargetMachine(const Target &T, const Triple &TT,
-										StringRef CPU, StringRef FS,
-										const TargetOptions &Options,
-										std::optional<Reloc::Model> RM,
-										std::optional<CodeModel::Model> CM,
-										CodeGenOptLevel OL, bool JIT)
+PIC16TargetMachine::PIC16TargetMachine(const Target &T, const Triple &TT, StringRef CPU, StringRef FS, const TargetOptions &Options, std::optional<Reloc::Model> RM, std::optional<CodeModel::Model> CM, CodeGenOptLevel OL, bool JIT)
 : LLVMTargetMachine(T, StringRef(PIC16DataLayout), TT, CPU, FS, Options,
 		getEffectiveRelocModel(RM),
         getEffectiveCodeModel(CM, CodeModel::Small), OL),
@@ -64,6 +59,12 @@ bool PIC16PassConfig::addInstSelector() {
 
 void PIC16PassConfig::addPreEmitPass() {
   addPass(createPIC16MemSelOptimizerPass());
+}
+
+void PIC16PassConfig::addIRPasses() {
+
+  // Uncomment for optimization
+  // TargetPassConfig::addIRPasses();
 }
 
 TargetPassConfig *PIC16TargetMachine::createPassConfig(PassManagerBase &PM) {

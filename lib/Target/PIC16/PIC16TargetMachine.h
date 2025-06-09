@@ -70,6 +70,7 @@ public:
 
   TargetPassConfig *createPassConfig(PassManagerBase &PM) override;
 
+
 //  virtual bool addInstSelector(PassManagerBase &PM,
 //                               CodeGenOptLevel OptLevel);
 //  virtual bool addPreEmitPass(PassManagerBase &PM, CodeGenOptLevel OptLevel);
@@ -84,9 +85,9 @@ public:
     return getTM<PIC16TargetMachine>();
   }
 
-  virtual void addIRPasses() {}
+  virtual void addIRPasses() override;
   virtual bool addInstSelector() override;
-  virtual void addPreSched2() {}
+  virtual void addPreSched2() override {}
   virtual void addPreEmitPass() override;
 };
 

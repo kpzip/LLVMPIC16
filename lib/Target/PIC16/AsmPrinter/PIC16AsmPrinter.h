@@ -17,10 +17,10 @@
 
 #include "PIC16.h"
 #include "PIC16TargetMachine.h"
-#include "PIC16DebugInfo.h"
+//#include "PIC16DebugInfo.h"
 #include "PIC16MCAsmInfo.h"
 #include "PIC16TargetObjectFile.h"
-#include "llvm/Analysis/DebugInfo.h"
+//#include "llvm/Analysis/DebugInfo.h"
 #include "llvm/CodeGen/AsmPrinter.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Target/TargetMachine.h"
@@ -31,7 +31,7 @@
 namespace llvm {
   class LLVM_LIBRARY_VISIBILITY PIC16AsmPrinter : public AsmPrinter {
   public:
-    explicit PIC16AsmPrinter(TargetMachine &TM, MCStreamer &Streamer);
+    explicit PIC16AsmPrinter(TargetMachine &TM, std::unique_ptr<MCStreamer> &Streamer);
   private:
     virtual const char *getPassName() const {
       return "PIC16 Assembly Printer";
@@ -77,7 +77,7 @@ namespace llvm {
     
   private:
     const PIC16TargetObjectFile *PTOF;
-    PIC16DbgInfo DbgInfo;
+    //PIC16DbgInfo DbgInfo;
     const PIC16MCAsmInfo *PMAI;
     std::set<std::string> LibcallDecls; // Sorted & uniqued set of extern decls.
     std::vector<const GlobalVariable *> ExternalVarDecls;

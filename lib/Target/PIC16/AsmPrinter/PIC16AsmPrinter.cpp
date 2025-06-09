@@ -35,8 +35,8 @@ using namespace llvm;
 
 #include "PIC16GenAsmWriter.inc"
 
-PIC16AsmPrinter::PIC16AsmPrinter(TargetMachine &TM, MCStreamer &Streamer)
-: AsmPrinter(TM, Streamer), DbgInfo(Streamer, TM.getMCAsmInfo()) {
+PIC16AsmPrinter::PIC16AsmPrinter(TargetMachine &TM, std::unique_ptr<MCStreamer> &Streamer)
+: AsmPrinter(TM, Streamer)/*, /*DbgInfo(Streamer, TM.getMCAsmInfo())*/ {
   PMAI = static_cast<const PIC16MCAsmInfo*>(TM.getMCAsmInfo());
   PTOF = &getObjFileLowering();
 }
@@ -104,7 +104,7 @@ bool PIC16AsmPrinter::runOnMachineFunction(MachineFunction &MF) {
   // Emit the function frame (args and temps).
   EmitFunctionFrame(MF);
 
-  DbgInfo.BeginFunction(MF);
+  //DbgInfo.BeginFunction(MF);
 
   // Now emit the instructions of function in its code section.
   const MCSection *fCodeSection = 
@@ -140,7 +140,7 @@ bool PIC16AsmPrinter::runOnMachineFunction(MachineFunction &MF) {
       // Emit the line directive if source line changed.
       DebugLoc DL = II->getDebugLoc();
       if (!DL.isUnknown() && DL != CurDL) {
-        DbgInfo.ChangeDebugLoc(MF, DL);
+        //DbgInfo.ChangeDebugLoc(MF, DL);
         CurDL = DL;
       }
         
@@ -150,7 +150,7 @@ bool PIC16AsmPrinter::runOnMachineFunction(MachineFunction &MF) {
   }
   
   // Emit function end debug directives.
-  DbgInfo.EndFunction(MF);
+  //DbgInfo.EndFunction(MF);
 
   return false;  // we didn't modify anything.
 }
@@ -476,7 +476,7 @@ void PIC16AsmPrinter::EmitAllAutos(Module &M) {
   EmitSectionList (M, PTOF->AUTOSections());
 }
 
-extern "C" void LLVMInitializePIC16AsmPrinter() { 
+extern "C" LLVM_EXTERNAL_VISIBILITY void LLVMInitializePIC16AsmPrinter() {
   RegisterAsmPrinter<PIC16AsmPrinter> X(ThePIC16Target);
 }
 

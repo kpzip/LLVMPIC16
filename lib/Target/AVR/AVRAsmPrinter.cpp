@@ -15,7 +15,7 @@
 #include "AVRMCInstLower.h"
 #include "AVRSubtarget.h"
 #include "AVRTargetMachine.h"
-#include "MCTargetDesc/AVRInstPrinter.h"
+#include "MCTargetDesc/PIC16InstPrinter.h"
 #include "MCTargetDesc/AVRMCExpr.h"
 #include "TargetInfo/AVRTargetInfo.h"
 
@@ -79,7 +79,7 @@ void AVRAsmPrinter::printOperand(const MachineInstr *MI, unsigned OpNo,
 
   switch (MO.getType()) {
   case MachineOperand::MO_Register:
-    O << AVRInstPrinter::getPrettyRegisterName(MO.getReg(), MRI);
+    O << PIC16InstPrinter::getPrettyRegisterName(MO.getReg(), MRI);
     break;
   case MachineOperand::MO_Immediate:
     O << MO.getImm();
@@ -139,7 +139,7 @@ bool AVRAsmPrinter::PrintAsmOperand(const MachineInstr *MI, unsigned OpNum,
                                                           : AVR::sub_lo);
     }
 
-    O << AVRInstPrinter::getPrettyRegisterName(Reg, MRI);
+    O << PIC16InstPrinter::getPrettyRegisterName(Reg, MRI);
     return false;
   }
 

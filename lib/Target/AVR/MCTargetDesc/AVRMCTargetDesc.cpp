@@ -12,7 +12,7 @@
 
 #include "AVRMCTargetDesc.h"
 #include "AVRELFStreamer.h"
-#include "AVRInstPrinter.h"
+#include "PIC16InstPrinter.h"
 #include "AVRMCAsmInfo.h"
 #include "AVRMCELFStreamer.h"
 #include "AVRTargetStreamer.h"
@@ -63,7 +63,7 @@ static MCInstPrinter *createAVRMCInstPrinter(const Triple &T,
                                              const MCInstrInfo &MII,
                                              const MCRegisterInfo &MRI) {
   if (SyntaxVariant == 0) {
-    return new AVRInstPrinter(MAI, MII, MRI);
+    return new PIC16InstPrinter(MAI, MII, MRI);
   }
 
   return nullptr;

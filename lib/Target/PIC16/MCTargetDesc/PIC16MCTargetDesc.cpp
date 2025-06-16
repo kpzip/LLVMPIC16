@@ -15,8 +15,7 @@
 #include "llvm/MC/MCSubtargetInfo.h"
 
 #define GET_REGINFO_MC_DESC
-#define GET_REGINFO_ENUM
-#include "PIC16GenRegisterInfo.h.inc"
+#include "PIC16RegisterInfo.h"
 
 #define GET_INSTRINFO_MC_DESC
 #include "PIC16GenInstrInfo.inc"
@@ -24,7 +23,7 @@
 #define GET_SUBTARGETINFO_MC_DESC
 #include "PIC16GenSubtargetInfo.inc"
 #include "PIC16InstPrinter.h"
-#include "AsmPrinter/PIC16AsmPrinter.h"
+#include "PIC16AsmPrinter.h"
 
 using namespace llvm;
 
@@ -52,10 +51,10 @@ static MCInstPrinter *createPIC16MCInstPrinter(const Triple &TT, unsigned Syntax
   return new PIC16InstPrinter(MAI, MII, MRI);
 }
 
-static AsmPrinter *createPIC16AsmPrinter(TargetMachine &TM, std::unique_ptr<MCStreamer> &&M) {
-  // probably a tablegen thing instead of calling the ctor directly TODO??
-  return new PIC16AsmPrinter(TM, *M);
-}
+//static AsmPrinter *createPIC16AsmPrinter(TargetMachine &TM, std::unique_ptr<MCStreamer> &&M) {
+//  // probably a tablegen thing instead of calling the ctor directly TODO??
+//  return new PIC16AsmPrinter(TM, *M);
+//}
 
 extern "C" LLVM_EXTERNAL_VISIBILITY void LLVMInitializePIC16TargetMC() {
   RegisterMCAsmInfo<PIC16MCAsmInfo> X(getThePIC16Target());
@@ -73,7 +72,8 @@ extern "C" LLVM_EXTERNAL_VISIBILITY void LLVMInitializePIC16TargetMC() {
   // Register the MC instruction printer
   TargetRegistry::RegisterMCInstPrinter(getThePIC16Target(), createPIC16MCInstPrinter);
 
+  // The following is not done in any other implementation, so not doing it here:
   // Register the ASM Printer
   // I will forever be in debt to gdb for helping me figure this one out
-  TargetRegistry::RegisterAsmPrinter(getThePIC16Target(), createPIC16AsmPrinter);
+//  TargetRegistry::RegisterAsmPrinter(getThePIC16Target(), createPIC16AsmPrinter);
 }

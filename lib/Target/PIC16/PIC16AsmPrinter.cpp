@@ -15,17 +15,17 @@
 #include "PIC16ABINames.h"
 #include "PIC16AsmPrinter.h"
 #include "PIC16Section.h"
-#include "PIC16MCAsmInfo.h"
+#include "MCTargetDesc/PIC16MCAsmInfo.h"
 #include "PIC16MachineFunctionInfo.h"
-#include "llvm/DerivedTypes.h"
-#include "llvm/Function.h"
-#include "llvm/Module.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/Module.h"
 #include "llvm/CodeGen/MachineFrameInfo.h"
 #include "llvm/CodeGen/MachineModuleInfo.h"
 #include "llvm/MC/MCStreamer.h"
 #include "llvm/MC/MCSymbol.h"
-#include "llvm/Target/Mangler.h"
-#include "llvm/Target/TargetRegistry.h"
+#include "llvm/IR/Mangler.h"
+#include "llvm/MC/TargetRegistry.h"
 #include "llvm/Target/TargetLoweringObjectFile.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/raw_ostream.h"
@@ -35,23 +35,23 @@ using namespace llvm;
 
 #include "PIC16GenAsmWriter.inc"
 
-PIC16AsmPrinter::PIC16AsmPrinter(TargetMachine &TM, std::unique_ptr<MCStreamer> &Streamer)
-: AsmPrinter(TM, Streamer)/*, /*DbgInfo(Streamer, TM.getMCAsmInfo())*/ {
+PIC16AsmPrinter::PIC16AsmPrinter(TargetMachine &TM, std::unique_ptr<MCStreamer> Streamer)
+: AsmPrinter(TM, std::move(Streamer))/*, /*DbgInfo(Streamer, TM.getMCAsmInfo())*/ {
   PMAI = static_cast<const PIC16MCAsmInfo*>(TM.getMCAsmInfo());
   PTOF = &getObjFileLowering();
 }
 
-void PIC16AsmPrinter::EmitInstruction(const MachineInstr *MI) {
+void PIC16AsmPrinter::emitInstruction(const MachineInstr *MI) {
   SmallString<128> Str;
   raw_svector_ostream OS(Str);
   printInstruction(MI, OS);
   
-  OutStreamer.EmitRawText(OS.str());
+  OutStreamer->emitRawText(OS.str());
 }
 
 static int getFunctionColor(const Function *F) {
   if (F->hasSection()) {
-    std::string Sectn = F->getSection();
+    std::string Sectn = F->getSection().str();
     std::string StrToFind = "Overlay=";
     std::string::size_type Pos = Sectn.find(StrToFind);
 
@@ -78,7 +78,7 @@ static int getFunctionColor(const Function *F) {
 
 // Color the Auto section of the given function. 
 void PIC16AsmPrinter::ColorAutoSection(const Function *F) {
-  std::string SectionName = PAN::getAutosSectionName(CurrentFnSym->getName());
+  std::string SectionName = PAN::getAutosSectionName(CurrentFnSym->getName().str());
   PIC16Section* Section = PTOF->findPIC16Section(SectionName);
   if (Section != NULL) {
     int Color = getFunctionColor(F);
@@ -98,7 +98,7 @@ bool PIC16AsmPrinter::runOnMachineFunction(MachineFunction &MF) {
   SetupMachineFunction(MF);
 
   // Put the color information from function to its auto section.
-  const Function *F = MF.getFunction();
+  const Function *F = &MF.getFunction();
   ColorAutoSection(F);
 
   // Emit the function frame (args and temps).
@@ -107,23 +107,23 @@ bool PIC16AsmPrinter::runOnMachineFunction(MachineFunction &MF) {
   //DbgInfo.BeginFunction(MF);
 
   // Now emit the instructions of function in its code section.
-  const MCSection *fCodeSection = 
-    getObjFileLowering().SectionForCode(CurrentFnSym->getName(), 
-                                        PAN::isISR(F->getSection()));
+  const MCSection *fCodeSection =
+    getObjFileLowering().SectionForCode(CurrentFnSym->getName().str(),
+                                        PAN::isISR(F->getSection().str()));
 
   // Start the Code Section.
-  OutStreamer.SwitchSection(fCodeSection);
+  OutStreamer->switchSection((MCSection*)fCodeSection);
 
   // Emit the frame address of the function at the beginning of code.
-  OutStreamer.EmitRawText("\tretlw  low(" + 
-                          Twine(PAN::getFrameLabel(CurrentFnSym->getName())) +
+  OutStreamer->emitRawText("\tretlw  low(" +
+                          Twine(PAN::getFrameLabel(CurrentFnSym->getName().str())) +
                           ")");
-  OutStreamer.EmitRawText("\tretlw  high(" +
-                          Twine(PAN::getFrameLabel(CurrentFnSym->getName())) +
+  OutStreamer->emitRawText("\tretlw  high(" +
+                          Twine(PAN::getFrameLabel(CurrentFnSym->getName().str())) +
                           ")");
 
   // Emit function start label.
-  OutStreamer.EmitLabel(CurrentFnSym);
+  OutStreamer->emitLabel(CurrentFnSym);
 
   DebugLoc CurDL;
   // Print out code for the function.
@@ -132,7 +132,7 @@ bool PIC16AsmPrinter::runOnMachineFunction(MachineFunction &MF) {
 
     // Print a label for the basic block.
     if (I != MF.begin())
-      EmitBasicBlockStart(I);
+      emitBasicBlockStart(I);
     
     // Print a basic block.
     for (MachineBasicBlock::const_iterator II = I->begin(), E = I->end();
@@ -145,7 +145,7 @@ bool PIC16AsmPrinter::runOnMachineFunction(MachineFunction &MF) {
       }
         
       // Print the assembly for the instruction.
-      EmitInstruction(II);
+      emitInstruction(II);
     }
   }
   
@@ -509,4 +509,3 @@ EmitSectionList(Module &M, const std::vector<PIC16Section *> &SList) {
     EmitSingleSection(SList[i]);
   }
 }
-

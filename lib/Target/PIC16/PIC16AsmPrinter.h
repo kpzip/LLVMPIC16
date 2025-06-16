@@ -18,7 +18,7 @@
 #include "PIC16.h"
 #include "PIC16TargetMachine.h"
 //#include "PIC16DebugInfo.h"
-#include "PIC16MCAsmInfo.h"
+#include "MCTargetDesc/PIC16MCAsmInfo.h"
 #include "PIC16TargetObjectFile.h"
 //#include "llvm/Analysis/DebugInfo.h"
 #include "llvm/CodeGen/AsmPrinter.h"
@@ -31,9 +31,9 @@
 namespace llvm {
   class LLVM_LIBRARY_VISIBILITY PIC16AsmPrinter : public AsmPrinter {
   public:
-    explicit PIC16AsmPrinter(TargetMachine &TM, std::unique_ptr<MCStreamer> &Streamer);
+    explicit PIC16AsmPrinter(TargetMachine &TM, std::unique_ptr<MCStreamer> Streamer);
   private:
-    virtual const char *getPassName() const {
+    virtual StringRef getPassName() const {
       return "PIC16 Assembly Printer";
     }
     
@@ -47,7 +47,7 @@ namespace llvm {
     void printInstruction(const MachineInstr *MI, raw_ostream &O);
     static const char *getRegisterName(unsigned RegNo);
 
-    void EmitInstruction(const MachineInstr *MI);
+    void emitInstruction(const MachineInstr *MI) override;
     void EmitFunctionDecls (Module &M);
     void EmitUndefinedVars (Module &M);
     void EmitDefinedVars (Module &M);
@@ -62,7 +62,7 @@ namespace llvm {
     void EmitUninitializedDataSection(const PIC16Section *S);
     void EmitInitializedDataSection(const PIC16Section *S);
     void EmitSingleSection(const PIC16Section *S);
-    void EmitSectionList(Module &M, 
+    void EmitSectionList(Module &M,
                          const std::vector< PIC16Section *> &SList);
     void ColorAutoSection(const Function *F);
   protected:

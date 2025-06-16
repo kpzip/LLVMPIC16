@@ -26,6 +26,7 @@ add_llvm_target(PIC16CodeGen
   PIC16TargetMachine.cpp
   PIC16TargetObjectFile.cpp
   PIC16SelectionDAGInfo.cpp
+  PIC16AsmPrinter.cpp
   
   DEPENDS
   intrinsics_gen
